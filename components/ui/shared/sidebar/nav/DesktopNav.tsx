@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@/hooks/useNavigation';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
+import { ToggleTheme } from '../../themes/toggle-theme';
 
 const DesktopNav = () => {
   const { paths } = useNavigation();
@@ -39,7 +40,8 @@ const DesktopNav = () => {
           ))}
         </ul>
       </nav>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center items-center gap-4">
+        <ToggleTheme />
         <UserButton />
       </div>
     </Card>

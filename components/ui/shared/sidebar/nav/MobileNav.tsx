@@ -11,6 +11,7 @@ import { useConversation } from '@/hooks/useConversation';
 import { useNavigation } from '@/hooks/useNavigation';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
+import { ToggleTheme } from '../../themes/toggle-theme';
 
 const MobileNav = () => {
   const { paths } = useNavigation();
@@ -41,6 +42,7 @@ const MobileNav = () => {
               </Link>
             </li>
           ))}
+          <ToggleTheme />
           <li className="flex items-center">
             <UserButton />
           </li>
