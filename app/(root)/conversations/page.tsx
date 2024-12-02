@@ -1,11 +1,10 @@
-'use client';
-
+import ConversationFallback from '@/components/ui/shared/conversation/ConversationFallback';
 import React from 'react';
 
 type Props = {};
 
 const Conversations = (props: Props) => {
-  return <div>Conversations Page</div>;
+  return <ConversationFallback />;
 };
 
 export default Conversations;
