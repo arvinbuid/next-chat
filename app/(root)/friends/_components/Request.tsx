@@ -17,7 +17,13 @@ type Props = {
 };
 
 const Request = ({ id, imageUrl, username, email }: Props) => {
-  const { mutate: denyRequest, pending } = useMutationState(api.request.deny);
+  const { mutate: denyRequest, pending: denyPending } = useMutationState(
+    api.request.deny,
+  );
+
+  const { mutate: acceptRequest, pending: acceptPending } = useMutationState(
+    api.request.deny,
+  );
 
   return (
     <Card className="w-full p-2 flex flex-row items-center justify-between gap-2">
@@ -34,7 +40,18 @@ const Request = ({ id, imageUrl, username, email }: Props) => {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button onClick={() => {}} disabled={pending}>
+        <Button
+          disabled={denyPending || acceptPending}
+          onClick={() => {
+            acceptRequest({ id })
+              .then(() => {
+                toast.success('Friend request accepted');
+              })
+              .catch(() => {
+                toast.error('Unexpecter error occurred');
+              });
+          }}
+        >
           <Check />
         </Button>
         <Button
