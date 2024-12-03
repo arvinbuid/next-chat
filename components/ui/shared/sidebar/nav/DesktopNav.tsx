@@ -11,6 +11,7 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { ToggleTheme } from '../../themes/toggle-theme';
+import { Badge } from '@/components/ui/badge';
 
 const DesktopNav = () => {
   const { paths } = useNavigation();
@@ -31,6 +32,11 @@ const DesktopNav = () => {
                       {path.icon}
                     </Button>
                   </TooltipTrigger>
+                  {path.count ? (
+                    <Badge className="absolute left-6 bottom-4 px-2 rounded-full">
+                      {path.count}
+                    </Badge>
+                  ) : null}
                   <TooltipContent>
                     <p>{path.name}</p>
                   </TooltipContent>

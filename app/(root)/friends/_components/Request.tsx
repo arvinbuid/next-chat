@@ -1,10 +1,13 @@
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { useMutationState } from '@/hooks/UseMutationState';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import { Check, User, X } from 'lucide-react';
 import React from 'react';
+import { toast } from 'sonner';
 
 type Props = {
   id: Id<'requests'>;
@@ -14,6 +17,8 @@ type Props = {
 };
 
 const Request = ({ id, imageUrl, username, email }: Props) => {
+  const { mutate: denyRequest, pending } = useMutationState(api.request.deny);
+
   return (
     <Card className="w-full p-2 flex flex-row items-center justify-between gap-2">
       <div className="flex items-center truncate gap-4">
@@ -29,10 +34,21 @@ const Request = ({ id, imageUrl, username, email }: Props) => {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button onClick={() => {}}>
+        <Button onClick={() => {}} disabled={pending}>
           <Check />
         </Button>
-        <Button onClick={() => {}} variant="destructive">
+        <Button
+          onClick={() => {
+            denyRequest({ id })
+              .then(() => {
+                toast.success('Friend request denied');
+              })
+              .catch(() => {
+                toast.error('Unexpecter error occurred');
+              });
+          }}
+          variant="destructive"
+        >
           <X />
         </Button>
       </div>
