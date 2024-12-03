@@ -19,11 +19,9 @@ const ItemList = ({ title, action: Action, children }: Props) => {
         'lg:block': isActive,
       })}
     >
-      <div className=" mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">
-          {title}
-          {Action ? Action : null}
-        </h1>
+      <div className="mb-4 flex items-center justify-between  ">
+        <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+        {Action ? Action : null}
       </div>
       <div className="w-full h-full flex flex-col justify-start items-center gap-2">
         {children}

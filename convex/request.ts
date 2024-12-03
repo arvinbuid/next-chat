@@ -10,11 +10,11 @@ export const create = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new ConvexError('Unauthorized ');
+      throw new ConvexError('Unauthorized');
     }
 
     if (args.email === identity.email) {
-      throw new ConvexError('Cannot send a request to yourself.');
+      throw new ConvexError("Can't send a request to yourself");
     }
 
     const currentUser = await getUserByClerkId({
@@ -32,16 +32,17 @@ export const create = mutation({
       .unique();
 
     if (!receiver) {
-      throw new ConvexError('User not found');
+      throw new ConvexError('User could not be found');
     }
 
     const requestAlreadySent = await ctx.db
       .query('requests')
       .withIndex('by_receiver_sender', (q) =>
         q.eq('receiver', receiver._id).eq('sender', currentUser._id),
-      );
+      )
+      .unique();
 
-    if (!requestAlreadySent) {
+    if (requestAlreadySent) {
       throw new ConvexError('Request already sent');
     }
 
@@ -49,13 +50,13 @@ export const create = mutation({
       .query('requests')
       .withIndex('by_receiver_sender', (q) =>
         q.eq('receiver', currentUser._id).eq('sender', receiver._id),
-      );
+      )
+      .unique();
 
-    if (!requestAlreadyReceived) {
-      throw new ConvexError('This user has already sent you friend request.');
+    if (requestAlreadyReceived) {
+      throw new ConvexError('This user has already sent you a request');
     }
 
-    // If all checks are successful, proceed to create a new request
     const request = await ctx.db.insert('requests', {
       sender: currentUser._id,
       receiver: receiver._id,
