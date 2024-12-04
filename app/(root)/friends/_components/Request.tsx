@@ -22,7 +22,7 @@ const Request = ({ id, imageUrl, username, email }: Props) => {
   );
 
   const { mutate: acceptRequest, pending: acceptPending } = useMutationState(
-    api.request.deny,
+    api.request.accept,
   );
 
   return (

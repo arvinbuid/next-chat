@@ -73,7 +73,7 @@ export const create = mutation({
       friends1.some((friend) => friend.user2 === receiver._id) ||
       friends2.some((friend) => friend.user1 === receiver._id)
     ) {
-      throw new ConvexError('You are already friends with the user');
+      throw new ConvexError('You are already friends with this user');
     }
 
     const request = await ctx.db.insert('requests', {
