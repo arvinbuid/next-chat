@@ -3,7 +3,7 @@ import { Card } from '../../card';
 
 type Props = React.PropsWithChildren<{}>;
 
-const ConversationComponent = ({ children }: Props) => {
+const ConversationContainer = ({ children }: Props) => {
   return (
     <Card className="w-full h-[calc(100svh-32px)] lg:h-full p-2 flex flex-col gap-2">
       {children}
@@ -11,4 +11,4 @@ const ConversationComponent = ({ children }: Props) => {
   );
 };
 
-export default ConversationComponent;
+export default ConversationContainer;
