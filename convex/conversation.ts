@@ -58,9 +58,29 @@ export const get = query({
         otherMember: {
           ...otherMemberDetails,
           lastSeenMessageId: otherMembership.lastSeenMessage,
-          otherMembers: null,
         },
+        otherMembers: null,
       };
+    } else {
+      const otherMembers = await Promise.all(
+        allConversationMemberships
+          .filter((membership) => membership.memberId !== currentUser._id)
+          .map(async (membership) => {
+            const member = await ctx.db.get(membership.memberId);
+
+            if (!member) {
+              throw new ConvexError('Member could not be found');
+            }
+
+            return {
+              _id: member._id,
+              username: member.username,
+              lastSeenMessageId: membership.lastSeenMessage,
+            };
+          }),
+      );
+
+      return { ...conversation, otherMembers, otherMember: null };
     }
   },
 });
