@@ -222,9 +222,53 @@ export const leaveGroup = mutation({
       .unique();
 
     if (!membership) {
-      throw new ConvexError('You are not a meber of this conversation!');
+      throw new ConvexError('You are not a member of this conversation!');
     }
 
     await ctx.db.delete(membership._id);
+  },
+});
+
+export const markRead = mutation({
+  args: {
+    conversationId: v.id('conversations'),
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError('Unauthorized');
+    }
+
+    const currentUser = await getUserByClerkId({
+      ctx,
+      clerkId: identity.subject,
+    });
+
+    if (!currentUser) {
+      throw new ConvexError('User not found');
+    }
+
+    // Check if the user is a member of the conversation
+    const membership = await ctx.db
+      .query('conversationMembers')
+      .withIndex('by_memberId_conversationId', (q) =>
+        q
+          .eq('memberId', currentUser._id)
+          .eq('conversationId', args.conversationId),
+      )
+      .unique();
+
+    if (!membership) {
+      throw new ConvexError('You are not a member of this conversation!');
+    }
+
+    // If the user is a member of the conversation,  reflect the last message the user has seen in the conversation
+    const lastMessage = await ctx.db.get(args.messageId);
+
+    await ctx.db.patch(membership._id, {
+      lastSeenMessage: lastMessage ? lastMessage._id : undefined,
+    });
   },
 });
