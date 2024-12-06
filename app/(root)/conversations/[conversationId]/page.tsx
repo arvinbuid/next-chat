@@ -9,7 +9,8 @@ import React, { useState } from 'react';
 import Header from './components/Header';
 import Body from './components/body/Body';
 import ChatInput from './components/input/ChatInput';
-import RemoveFriend from './components/dialogs/RemoveFriend';
+import RemoveFriendDialog from './components/dialogs/RemoveFriend';
+import DeleteGroupDialog from './components/dialogs/DeleteGroupDialog';
 
 type Props = {
   params: {
@@ -35,19 +36,24 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
     </p>
   ) : (
     <ConversationContainer>
-      <RemoveFriend
+      <RemoveFriendDialog
         conversationId={conversationId}
         open={removeFriendDialogOpen}
         setOpen={setRemoveFriendDialogOpen}
+      />
+      <DeleteGroupDialog
+        conversationId={conversationId}
+        open={deleteGroupDialogOpen}
+        setOpen={setDeleteGroupDialogOpen}
       />
       <Header
         name={
           (conversation.isGroup
             ? conversation.name
-            : conversation.otherMember.username) || ''
+            : conversation.otherMember?.username) || ''
         }
         imageUrl={
-          conversation.isGroup ? undefined : conversation.otherMember.imageUrl
+          conversation.isGroup ? undefined : conversation.otherMember?.imageUrl
         }
         options={
           conversation.isGroup

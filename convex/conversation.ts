@@ -122,3 +122,65 @@ export const createGroup = mutation({
     );
   },
 });
+
+export const deleteGroup = mutation({
+  args: {
+    conversationId: v.id('conversations'),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError('Unauthorized');
+    }
+
+    const currentUser = await getUserByClerkId({
+      ctx,
+      clerkId: identity.subject,
+    });
+
+    if (!currentUser) {
+      throw new ConvexError('User not found');
+    }
+
+    const conversationId = await ctx.db.get(args.conversationId);
+
+    if (!conversationId) {
+      throw new ConvexError('Conversation not found');
+    }
+
+    // Check if the user is a member of the conversation
+    const memberships = await ctx.db
+      .query('conversationMembers')
+      .withIndex('by_conversationId', (q) =>
+        q.eq('conversationId', args.conversationId),
+      )
+      .collect();
+
+    if (!memberships || memberships.length <= 1) {
+      throw new ConvexError('This conversation does not have any members!');
+    }
+
+    const messages = await ctx.db
+      .query('messages')
+      .withIndex('by_conversationId', (q) =>
+        q.eq('conversationId', args.conversationId),
+      )
+      .collect();
+
+    // If all conditions are met, start removing friends
+    await ctx.db.delete(args.conversationId);
+
+    await Promise.all(
+      memberships.map(async (membership) => {
+        await ctx.db.delete(membership._id);
+      }),
+    );
+
+    await Promise.all(
+      messages.map(async (message) => {
+        await ctx.db.delete(message._id);
+      }),
+    );
+  },
+});
