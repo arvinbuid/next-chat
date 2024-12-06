@@ -11,6 +11,7 @@ import Body from './components/body/Body';
 import ChatInput from './components/input/ChatInput';
 import RemoveFriendDialog from './components/dialogs/RemoveFriend';
 import DeleteGroupDialog from './components/dialogs/DeleteGroupDialog';
+import LeaveGroupDialog from './components/dialogs/LeaveGroupDialog';
 
 type Props = {
   params: {
@@ -36,6 +37,11 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
     </p>
   ) : (
     <ConversationContainer>
+      <LeaveGroupDialog
+        conversationId={conversationId}
+        open={leaveGroupDialogOpen}
+        setOpen={setLeaveGroupDialogOpen}
+      />
       <RemoveFriendDialog
         conversationId={conversationId}
         open={removeFriendDialogOpen}
