@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Id } from '@/convex/_generated/dataModel';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ type Props = {
   name: string;
   lastMessageSender?: string;
   lastMessageContent?: string;
+  unseenCount: number;
 };
 
 const GroupConversationItem = ({
@@ -16,6 +18,7 @@ const GroupConversationItem = ({
   name,
   lastMessageSender,
   lastMessageContent,
+  unseenCount,
 }: Props) => {
   return (
     <Link href={`/conversations/${id}`} className="w-full">
@@ -45,6 +48,7 @@ const GroupConversationItem = ({
             )}
           </div>
         </div>
+        {unseenCount ? <Badge>{unseenCount}</Badge> : null}
       </Card>
     </Link>
   );
