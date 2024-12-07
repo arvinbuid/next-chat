@@ -20,6 +20,7 @@ import { z } from 'zod';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Button } from '@/components/ui/button';
 import { SendHorizonal } from 'lucide-react';
+import MessageActionsPopover from './MessageActionsPopover';
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, { message: 'This field cannot be empty' }),
@@ -73,6 +74,7 @@ const ChatInput = () => {
   return (
     <Card className="w-full p-2 rounded-lg relative">
       <div className="flex gap-2 items-end w-full">
+        <MessageActionsPopover />
         <Form {...form}>
           <form
             className="flex gap-2 items-end w-full"
