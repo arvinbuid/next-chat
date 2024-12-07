@@ -21,7 +21,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { Button } from '@/components/ui/button';
 import { SendHorizonal } from 'lucide-react';
 import MessageActionsPopover from './MessageActionsPopover';
-import EmojiPicker, { Theme } from 'emoji-picker-react';
+import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, { message: 'This field cannot be empty' }),
@@ -32,7 +32,7 @@ const ChatInput = () => {
   const emojiPickerRef = useRef<any>(null);
 
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-  let theme: unknown;
+
   const [cursorPosition, setCursorPosition] = useState(0);
 
   const { conversationId } = useConversation();
@@ -66,6 +66,10 @@ const ChatInput = () => {
         );
       });
   };
+
+  // Emoji picker props config
+  const theme = 'auto';
+  const emojiStyle = 'apple';
 
   // Watch the form content and its initial values
   const content = form.watch('content', '');
@@ -127,6 +131,7 @@ const ChatInput = () => {
               setEmojiPickerOpen(false);
             }}
             lazyLoadEmojis
+            emojiStyle={emojiStyle as EmojiStyle}
           />
         </div>
 
