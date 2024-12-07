@@ -33,6 +33,7 @@ const ChatInput = () => {
 
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   let theme: unknown;
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   const { conversationId } = useConversation();
 
@@ -66,6 +67,22 @@ const ChatInput = () => {
       });
   };
 
+  // Watch the form content and its initial values
+  const content = form.watch('content', '');
+
+  const insertEmoji = (emoji: string) => {
+    const newText = [
+      content.substring(0, cursorPosition),
+      emoji,
+      content.substring(cursorPosition),
+    ].join('');
+
+    // Set the form content and its current text
+    form.setValue('content', newText);
+
+    setCursorPosition(cursorPosition + emoji.length);
+  };
+
   // Close the emoji
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -93,6 +110,7 @@ const ChatInput = () => {
     // If not null, update the value of form
     if (selectionStart !== null) {
       form.setValue('content', value);
+      setCursorPosition(selectionStart);
     }
   };
 
@@ -104,7 +122,10 @@ const ChatInput = () => {
           <EmojiPicker
             open={emojiPickerOpen}
             theme={theme as Theme}
-            onEmojiClick={() => setEmojiPickerOpen(false)}
+            onEmojiClick={(emojiDetails) => {
+              insertEmoji(emojiDetails.emoji);
+              setEmojiPickerOpen(false);
+            }}
             lazyLoadEmojis
           />
         </div>
