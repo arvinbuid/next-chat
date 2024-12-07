@@ -13,7 +13,7 @@ import { useConversation } from '@/hooks/useConversation';
 import { useMutationState } from '@/hooks/UseMutationState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ConvexError } from 'convex/values';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -21,6 +21,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { Button } from '@/components/ui/button';
 import { SendHorizonal } from 'lucide-react';
 import MessageActionsPopover from './MessageActionsPopover';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, { message: 'This field cannot be empty' }),
@@ -28,6 +29,11 @@ const chatMessageSchema = z.object({
 
 const ChatInput = () => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const emojiPickerRef = useRef<any>(null);
+
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  let theme: unknown;
+
   const { conversationId } = useConversation();
 
   const { mutate: createMessage, pending } = useMutationState(
@@ -60,6 +66,25 @@ const ChatInput = () => {
       });
   };
 
+  // Close the emoji
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setEmojiPickerOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   // Get the value & place of the cursor inside the form
   const handleInputChange = (event: any) => {
     event.preventDefault();
@@ -74,7 +99,17 @@ const ChatInput = () => {
   return (
     <Card className="w-full p-2 rounded-lg relative">
       <div className="flex gap-2 items-end w-full">
-        <MessageActionsPopover />
+        {/* Emoji Picker */}
+        <div className="absolute bottom-16" ref={emojiPickerRef}>
+          <EmojiPicker
+            open={emojiPickerOpen}
+            theme={theme as Theme}
+            onEmojiClick={() => setEmojiPickerOpen(false)}
+            lazyLoadEmojis
+          />
+        </div>
+
+        <MessageActionsPopover setEmojiPickerOpen={setEmojiPickerOpen} />
         <Form {...form}>
           <form
             className="flex gap-2 items-end w-full"
