@@ -9,7 +9,7 @@ type Props = {
   type: 'image' | 'file';
 };
 
-const uploader = ({ onChange, type }: Props) => {
+const Uploader = ({ onChange, type }: Props) => {
   return (
     <UploadDropzone
       endpoint={type}
@@ -21,4 +21,4 @@ const uploader = ({ onChange, type }: Props) => {
   );
 };
 
-export default uploader;
+export default Uploader;
